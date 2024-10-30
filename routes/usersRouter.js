@@ -12,7 +12,7 @@ router.post("/register",async (req,res)=>{
         let user = await userModel.findOne({email: email});
         if(user) 
         {
-            return res.status(400).json({
+                return res.status(200).json({
                 success: false,
                 message: `User Account already Exists with username: ${user.username}`,
             });
@@ -48,7 +48,7 @@ router.post("/login",async (req,res)=>{
     let user = await userModel.findOne({email:email});
     if(!user)
     {
-        return res.status(400).json({
+        return res.status(200).json({
             registered: false,
             authorized: false,
             message: `User is not registered !!!`,
@@ -66,7 +66,7 @@ router.post("/login",async (req,res)=>{
             });
         }
         else{
-            res.status(403).json({
+            res.status(200).json({
                 registered: true,
                 authorized: false,
                 message: `Not Authorized !!!`,
