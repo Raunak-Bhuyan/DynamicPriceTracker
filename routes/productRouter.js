@@ -4,29 +4,24 @@ const userModel = require('../models/userModel');
 const axios = require('axios');
 const redis = require('redis');
 
-// const redisClient = redis.createClient({
-//     url: "redis://localhost:6379", // Change this URL if Redis is hosted remotely
-// });
+const redisClient = redis.createClient({
+    url: "redis://localhost:6379", // Change this URL if Redis is hosted remotely
+});
 
-// redisClient.connect();
+redisClient.connect();
 
-router.post('/api/process', async (req, res) => {
-  const { data, requestId } = req.body;
-
-  // Define the callback URL with the unique request ID
-  const callbackUrl = `http://localhost:5000/api/callback/${requestId}`;
+router.post('/api/send', async (req, res) => {
+  const { data } = req.body;
 
   try {
-    // Forward the request to Server 2 with data, requestId, and callbackUrl
-    await axios.post('http://localhost:4000/api/handle', {
-      data,
-      callbackUrl,
-    });
+    // Forward the request to Server 2
+    const response = await axios.post('http://localhost:4000/api/process', { data });
 
-    res.status(200).json({ message: 'Request forwarded to Server 2, awaiting response.' });
+    // Send the processed data received from Server 2 to the frontend
+    res.status(200).json(response.data);
   } catch (error) {
-    console.error("Error forwarding request to Server 2:", error);
-    res.status(500).json({ message: 'Error forwarding request to Server 2.' });
+    console.error('Error in forwarding request to Server 2:', error);
+    res.status(500).json({ message: 'Error processing the request' });
   }
 });
 
