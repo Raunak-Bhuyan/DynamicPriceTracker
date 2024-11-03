@@ -1,27 +1,38 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userModel = require('../models/userModel');
-const axios = require('axios');
-const redis = require('redis');
+const userModel = require("../models/userModel");
+const axios = require("axios");
+const redis = require("redis");
 
-const redisClient = redis.createClient({
-    url: "redis://localhost:6379", // Change this URL if Redis is hosted remotely
-});
+const redisConnect = () => {
+  try {
+    const redisClient = redis.createClient({
+      url: "redis://localhost:6379", // Change this URL if Redis is hosted remotely
+    });
 
-redisClient.connect();
+    redisClient.connect();
+  } catch (err) {
+    console.error("Error connecting to Redis:", err);
+  }
+};
 
-router.post('/api/send', async (req, res) => {
+redisConnect();
+
+router.post("/api/send", async (req, res) => {
   const { data } = req.body;
 
   try {
     // Forward the request to Server 2
-    const response = await axios.post('http://localhost:4000/api/process', { data });
+    const response = await axios.post("http://localhost:4000/api/process", {
+      data,
+      //callbackUrl = "http://localhost:8080/api/send"
+    });
 
     // Send the processed data received from Server 2 to the frontend
     res.status(200).json(response.data);
   } catch (error) {
-    console.error('Error in forwarding request to Server 2:', error);
-    res.status(500).json({ message: 'Error processing the request' });
+    console.error("Error in forwarding request to Server 2:", error);
+    res.status(500).json({ message: "Error processing the request" });
   }
 });
 
