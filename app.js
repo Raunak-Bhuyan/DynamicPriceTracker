@@ -17,8 +17,8 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use("/users",usersRouter);
 app.use("/products",productRouter);
 
-const PORT=process.env.PORT || 8080;
+const PORT=5000;//process.env.PORT || 8080;
 
-app.listen(3000,()=>{
+app.listen(PORT,()=>{
     console.log(`App is listening at port ${PORT}...`);
 });
