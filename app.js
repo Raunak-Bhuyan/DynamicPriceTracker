@@ -4,18 +4,19 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const usersRouter = require('./routes/usersRouter');
-const productRouter = require('./routes/productRouter')
+const product = require('./routes/product')
 
 
-const db = require('./config/mongoose-connection');
+const db = require('./config/mongodb.js');
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.join(__dirname,"public")));
+db.connect();
 
 app.use("/users",usersRouter);
-app.use("/products",productRouter);
+app.use("/product",product);
 
 const PORT=5000;//process.env.PORT || 8080;
 
